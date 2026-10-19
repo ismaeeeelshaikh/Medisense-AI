@@ -1,0 +1,86 @@
+# ============================================================
+# Environment / secrets — never commit real values
+# ============================================================
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# ============================================================
+# Dependencies
+# ============================================================
+node_modules/
+**/node_modules/
+
+# ============================================================
+# Build output
+# ============================================================
+dist/
+build/
+**/dist/
+**/build/
+
+# ============================================================
+# Logs
+# ============================================================
+logs/
+**/logs/
+*.log
+npm-debug.log*
+
+# ============================================================
+# Uploaded / generated files
+# ============================================================
+backend/uploads/
+uploads/
+
+# ============================================================
+# Python / ML service
+# ============================================================
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+ml-service/**/*.pkl
+ml-service/**/*.joblib
+ml-service/**/*.pt
+# ...except the trained artifacts the service actually serves. Render builds
+# the image from the repo, so without these the deployed ML service boots
+# with no models at all. ~17 MB total.
+!ml-service/app/models/*.pkl
+!ml-service/app/models/*.pt
+# Reproducible training-data cache built by prepare_ecg_dataset.py from
+# PhysioNet — regenerate rather than commit (~7MB, derived, not source).
+ml-service/data/mitbih_beats.npz
+# DS1/DS2 inter-patient cache built by prepare_ecg_inter_patient.py.
+ml-service/data/mitbih_inter_patient.npz
+
+# ============================================================
+# Editor / OS
+# ============================================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ============================================================
+# Misc local artifacts
+# ============================================================
+*.tsbuildinfo
+coverage/
+
+# ============================================================
+# Local tooling / scratch — not part of the project
+# ============================================================
+# MCP server config: machine-specific absolute paths, not portable.
+.mcp.json
+.qodo/
+# Playwright MCP scratch output (snapshots, console logs).
+.playwright-mcp/

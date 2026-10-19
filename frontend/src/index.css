@@ -1,0 +1,806 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Onest:wght@400..700&family=Spline+Sans+Mono:wght@400..600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS — MediSense AI "Forest"
+
+   Source palette, darkest to lightest:
+     #051F20 dark forest · #0B2B26 deep pine · #163832 muted teal-green
+     #235347 dark sage   · #8EB69B soft sage · #DAF1DE pale mint
+
+   The dark half anchors the shell (sidebar, landing hero); the light half
+   is the reading surface. Every token name is stable — pages and ui/
+   components read these, so a palette swap is an edit here and nowhere
+   else. Text values are checked against WCAG AA on the surfaces they sit on.
+   ══════════════════════════════════════════════════ */
+
+:root {
+  color-scheme: light;
+
+  /* ── RAW PALETTE (for surfaces that are deliberately dark) ── */
+  --forest-900: #051F20;
+  --forest-800: #0B2B26;
+  --forest-700: #163832;
+  --forest-600: #235347;
+  --sage-400:   #8EB69B;
+  --mint-100:   #DAF1DE;
+
+  /* ── BACKGROUNDS ── */
+  --bg-primary:    #EEF6EF;
+  --bg-secondary:  #DAF1DE;
+  --bg-tertiary:   #C4E2CB;
+  --bg-glass:      rgba(250, 253, 250, 0.84);
+  --bg-overlay:    rgba(5, 31, 32, 0.58);
+
+  /* ── ELEVATED SURFACES ── */
+  --surface-0:        #FFFFFF;
+  --surface-1:        #FAFDFA;
+  --surface-2:        #EEF6EF;
+  --surface-3:        #DAF1DE;
+  --surface-border:    rgba(35, 83, 71, 0.14);
+  --surface-border-md: rgba(35, 83, 71, 0.24);
+  --surface-border-hi: rgba(35, 83, 71, 0.36);
+
+  /* ── PRIMARY ACCENT — DARK SAGE ── */
+  --accent-primary:       #235347;
+  --accent-primary-dim:   #163832;
+  --accent-primary-hover: #2E6B5B;
+  --accent-glow:          rgba(35, 83, 71, 0.16);
+  --accent-glow-sm:       rgba(35, 83, 71, 0.08);
+
+  /* ── SECONDARY ACCENT — MID SAGE (safe under white text) ── */
+  --accent-magenta:       #3F7A63;
+  --accent-magenta-dim:   #2E6B5B;
+  --accent-magenta-glow:  rgba(63, 122, 99, 0.16);
+
+  /* ── TERTIARY ── */
+  --accent-green:         #3F8A66;
+  --accent-green-dim:     #2B6A4F;
+  --accent-green-glow:    rgba(63, 138, 102, 0.16);
+  --accent-mint:          #DAF1DE;
+  --accent-sage:          #8EB69B;
+
+  /* ── RISK / SEVERITY SCALE ──
+     Severity stays red/amber/green so it reads at a glance; the hues are
+     pulled slightly toward the palette so they sit in it rather than on it. */
+  --risk-critical:    #C8434B;
+  --risk-critical-bg: rgba(200, 67, 75, 0.10);
+  --risk-critical-border: rgba(200, 67, 75, 0.28);
+  --risk-high:        #D97A3A;
+  --risk-high-bg:     rgba(217, 122, 58, 0.11);
+  --risk-medium:      #C99A2A;
+  --risk-medium-bg:   rgba(201, 154, 42, 0.14);
+  --risk-low:         #3F8A66;
+  --risk-low-bg:      rgba(63, 138, 102, 0.11);
+  --mint-bg:          rgba(218, 241, 222, 0.7);
+
+  /* ── TEXT-ON-TINT VARIANTS ──
+     For coloured text sitting on a light tint of its own hue (badges, chips,
+     active states). Each clears 4.5:1 on a 12% tint over the canvas. */
+  --risk-low-text:      #2B6A4F;
+  --risk-medium-text:   #7A5C14;
+  --risk-high-text:     #924E21;
+  --risk-critical-text: #B0363F;
+  --accent-green-text:  #2B6A4F;
+
+  /* ── TEXT ──
+     Deep pine instead of black: 13.7:1 on the canvas, and it keeps even the
+     body copy inside the palette. */
+  --text-primary:   #0B2B26;
+  --text-secondary: #3E5A52;
+  --text-muted:     #4F6B62;
+  --text-inverse:   #FFFFFF;
+
+  /* ── VITALS PALETTE ── */
+  --vitals-heart:   #C8434B;
+  --vitals-oxygen:  #2E7A8A;
+  --vitals-bp:      #7A68AE;
+  --vitals-temp:    #D97A3A;
+  --vitals-glucose: #3F8A66;
+
+  /* ── CHART COLORS ── */
+  --chart-1: #235347;
+  --chart-2: #8EB69B;
+  --chart-3: #C99A2A;
+  --chart-4: #D97A3A;
+  --chart-5: #7A68AE;
+  --chart-6: #C8434B;
+  --chart-7: #0B2B26;
+
+  /* ── TYPOGRAPHY ──
+     Bricolage Grotesque for display — a grotesque with an optical-size axis,
+     so headings get genuine character instead of a scaled-up body face.
+     Onest for body: humanist and very legible at small sizes. Spline Sans
+     Mono for numbers, where tabular alignment matters in vitals and scores. */
+  --font-display: 'Bricolage Grotesque', 'Onest', system-ui, sans-serif;
+  --font-body:    'Onest', system-ui, sans-serif;
+  --font-mono:    'Spline Sans Mono', ui-monospace, monospace;
+
+  /* ── SPACING / RADII ── */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  18px;
+  --radius-xl:  24px;
+  --radius-2xl: 32px;
+
+  /* ── SHADOWS / GLOWS — forest-tinted, so depth reads green not grey ── */
+  --shadow-sm:         0 1px 3px rgba(5, 31, 32, 0.08);
+  --shadow-md:         0 4px 14px rgba(5, 31, 32, 0.10);
+  --shadow-lg:         0 10px 32px rgba(5, 31, 32, 0.13);
+  --shadow-xl:         0 20px 50px rgba(5, 31, 32, 0.18);
+  --glow-cyan:         0 4px 16px rgba(35, 83, 71, 0.30);
+  --glow-cyan-sm:      0 2px 8px rgba(35, 83, 71, 0.20);
+  --glow-magenta:      0 4px 16px rgba(63, 122, 99, 0.25);
+  --glow-red:          0 4px 16px rgba(200, 67, 75, 0.25);
+  --glow-green:        0 4px 16px rgba(63, 138, 102, 0.25);
+  --glow-card:         0 0 0 1px rgba(35, 83, 71, 0.06), 0 2px 12px rgba(5, 31, 32, 0.06);
+}
+
+/* ══════════════════════════════════════════════════
+   GLOBAL RESET & BASE
+   ══════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Keyboard focus indicator — the audit found zero visible focus states
+   anywhere in the app. Scoped to :focus-visible so mouse clicks don't
+   show a ring, only keyboard/AT navigation does. */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(35, 83, 71, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(218, 241, 222, 0.45) 0%, transparent 60%);
+}
+
+/* ══════════════════════════════════════════════════
+   SCROLLBAR
+   ══════════════════════════════════════════════════ */
+
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb    { background: rgba(35, 83, 71, 0.22); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(35, 83, 71, 0.38); }
+
+/* ══════════════════════════════════════════════════
+   TYPOGRAPHY
+   ══════════════════════════════════════════════════ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.font-mono, .stat-number { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ══════════════════════════════════════════════════
+   PAGE SHELL
+   ══════════════════════════════════════════════════ */
+
+.page-content {
+  padding: 28px 32px;
+  max-width: 1600px;
+}
+
+/* ══════════════════════════════════════════════════
+   GLASS CARDS
+   ══════════════════════════════════════════════════ */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.glass-card-elevated {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  border: 1px solid var(--surface-border-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ══════════════════════════════════════════════════
+   STAT / KPI CARDS
+   ══════════════════════════════════════════════════ */
+
+.stat-card {
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, transparent 60%);
+  pointer-events: none;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--surface-border-md);
+  box-shadow: var(--shadow-md);
+}
+
+/* ══════════════════════════════════════════════════
+   RISK / SEVERITY BADGES
+   ══════════════════════════════════════════════════ */
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  border: 1px solid transparent;
+}
+.risk-badge.critical {
+  background: var(--risk-critical-bg);
+  color: var(--risk-critical-text);
+  border-color: var(--risk-critical-border);
+}
+.risk-badge.high    { background: var(--risk-high-bg);   color: var(--risk-high-text); }
+.risk-badge.medium  { background: var(--risk-medium-bg); color: var(--risk-medium-text); }
+.risk-badge.low     { background: var(--risk-low-bg);    color: var(--risk-low-text); }
+
+/* ══════════════════════════════════════════════════
+   ACCURACY METER COMPONENTS
+   ══════════════════════════════════════════════════ */
+
+.accuracy-card {
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+}
+.accuracy-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-cyan-sm);
+}
+
+.accuracy-ring-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.accuracy-value {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.model-accuracy-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(35, 83, 71, 0.10);
+  color: var(--accent-primary);
+  border: 1px solid rgba(35, 83, 71, 0.22);
+  font-family: var(--font-mono);
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR NAV ITEMS
+   ══════════════════════════════════════════════════ */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+.nav-item:hover {
+  background: rgba(35, 83, 71, 0.07);
+  color: var(--text-primary);
+  border-color: rgba(35, 83, 71, 0.12);
+}
+.nav-item:hover::before { background: rgba(35, 83, 71, 0.45); }
+
+.nav-item.active {
+  background: rgba(35, 83, 71, 0.10);
+  color: var(--accent-primary);
+  border-color: rgba(35, 83, 71, 0.20);
+}
+.nav-item.active::before { background: var(--accent-primary); }
+
+/* ══════════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════════ */
+
+.btn-primary {
+  background: linear-gradient(135deg, #235347 0%, #163832 100%);
+  color: #fff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 10px rgba(35, 83, 71, 0.22);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #2E6B5B 0%, #235347 100%);
+  box-shadow: var(--glow-cyan);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  background: rgba(35, 83, 71, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid var(--surface-border);
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+}
+.btn-ghost:hover {
+  background: rgba(35, 83, 71, 0.10);
+  color: var(--text-primary);
+  border-color: var(--surface-border-md);
+}
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-danger {
+  background: var(--risk-critical-bg);
+  color: var(--risk-critical);
+  border: 1px solid var(--risk-critical-border);
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+}
+.btn-danger:hover {
+  background: rgba(200, 67, 75, 0.18);
+  box-shadow: var(--glow-red);
+}
+
+/* ══════════════════════════════════════════════════
+   FORM INPUTS
+   ══════════════════════════════════════════════════ */
+
+.form-input {
+  background: var(--surface-0);
+  border: 1px solid var(--surface-border-md);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  font-size: 13.5px;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+}
+.form-input:focus {
+  border-color: var(--accent-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(35, 83, 71, 0.12);
+}
+.form-input::placeholder { color: var(--text-muted); }
+.form-input option { background: var(--surface-0); }
+
+/* ══════════════════════════════════════════════════
+   DATA TABLES
+   ══════════════════════════════════════════════════ */
+
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  background: rgba(35, 83, 71, 0.05);
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--surface-border);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(35, 83, 71, 0.08);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  transition: background 0.12s ease;
+}
+.data-table tr:hover td {
+  background: rgba(35, 83, 71, 0.045);
+}
+.data-table tr:last-child td { border-bottom: none; }
+
+/* ══════════════════════════════════════════════════
+   PROGRESS / ACCURACY BARS
+   ══════════════════════════════════════════════════ */
+
+.progress-bar-track {
+  height: 6px;
+  background: rgba(35, 83, 71, 0.12);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 20px; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45));
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════════
+   VITALS
+   ══════════════════════════════════════════════════ */
+
+.vitals-card {
+  background: var(--surface-1);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+.vitals-card.critical {
+  animation: vitalCriticalPulse 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════════
+   SECTION LABELS
+   ══════════════════════════════════════════════════ */
+
+.section-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  padding: 0 14px 4px;
+}
+
+/* ══════════════════════════════════════════════════
+   METRIC CHIP
+   ══════════════════════════════════════════════════ */
+
+.metric-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(35, 83, 71, 0.06);
+  border: 1px solid var(--surface-border);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+/* ══════════════════════════════════════════════════
+   ACCENT DIVIDER
+   ══════════════════════════════════════════════════ */
+
+.neon-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0.3;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════════════════ */
+
+/* Critical pulse */
+@keyframes criticalPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 67, 75, 0.40); }
+  50%       { box-shadow: 0 0 0 10px rgba(200, 67, 75, 0); }
+}
+.pulse-critical { animation: criticalPulse 1.8s ease infinite; }
+
+/* Vital sign critical state */
+@keyframes vitalCriticalPulse {
+  0%, 100% { border-color: var(--surface-border); box-shadow: var(--shadow-sm); }
+  50%       { border-color: var(--risk-critical); box-shadow: 0 0 14px rgba(200, 67, 75, 0.22); }
+}
+
+/* Heartbeat */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.2); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.12); }
+  70%       { transform: scale(1); }
+}
+.heartbeat { animation: heartbeat 1.4s ease-in-out infinite; }
+
+/* Page enter */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter { animation: pageEnter 0.35s cubic-bezier(0.4,0,0.2,1); }
+
+/* Shimmer */
+@keyframes shimmer {
+  0%   { transform: translateX(-20px); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: translateX(20px); opacity: 0; }
+}
+
+/* Scan line */
+@keyframes scanLine {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* Glow pulse */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* Spin */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
+.blink { animation: blink 1.2s ease-in-out infinite; }
+
+/* Live dot */
+@keyframes liveDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.7; }
+}
+.live-dot { animation: liveDot 1.5s ease-in-out infinite; }
+
+/* Fade up */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease-out forwards; }
+
+/* Gradient shift */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ══════════════════════════════════════════════════
+   RECHARTS CUSTOM
+   ══════════════════════════════════════════════════ */
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--surface-0) !important;
+  border: 1px solid var(--surface-border-md) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ══════════════════════════════════════════════════
+   ACCURACY HEADER BANNER
+   ══════════════════════════════════════════════════ */
+
+.accuracy-banner {
+  background: linear-gradient(135deg, rgba(35, 83, 71, 0.08) 0%, rgba(63, 138, 102, 0.06) 100%);
+  border: 1px solid rgba(35, 83, 71, 0.16);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.accuracy-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0.5;
+}
+
+/* ══════════════════════════════════════════════════
+   TOOLTIP
+   ══════════════════════════════════════════════════ */
+
+.tooltip-custom {
+  background: var(--surface-0);
+  border: 1px solid var(--surface-border-md);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════
+   LOADING STATES
+   ══════════════════════════════════════════════════ */
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ══════════════════════════════════════════════════
+   CARD HOVER GLOW VARIANTS
+   ══════════════════════════════════════════════════ */
+
+.card-hover-accent:hover   { box-shadow: 0 0 0 1px rgba(35, 83, 71, 0.28),  var(--shadow-md); }
+.card-hover-critical:hover { box-shadow: 0 0 0 1px rgba(200, 67, 75, 0.28),  var(--shadow-md); }
+.card-hover-success:hover  { box-shadow: 0 0 0 1px rgba(63, 138, 102, 0.28), var(--shadow-md); }
+
+/* ══════════════════════════════════════════════════
+   GRID BACKGROUND PATTERN
+   ══════════════════════════════════════════════════ */
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(35, 83, 71, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35, 83, 71, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Keyframe Animations ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ══════════════════════════════════════════════════
+   DARK SIDEBAR LINKS
+   The sidebar is the dark anchor of the shell. Link colours live here
+   rather than in inline styles so hover works; --role-color is set on the
+   <aside> per signed-in role.
+   ══════════════════════════════════════════════════ */
+
+.sidebar-link {
+  color: #9DBBA8;
+  border-left: 3px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.sidebar-link:hover {
+  background: rgba(142, 182, 155, 0.08);
+  color: var(--mint-100);
+}
+.sidebar-link.active {
+  background: var(--forest-700);
+  color: var(--mint-100);
+  border-left-color: var(--role-color, var(--sage-400));
+}
+.sidebar-link.active svg { color: var(--role-color, var(--sage-400)); }

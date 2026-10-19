@@ -1,0 +1,517 @@
+{
+  "generated_at": "2026-09-08T09:22:12.533623+00:00",
+  "models": {
+    "symptom_checker": {
+      "status": "trained",
+      "training_script": "train/train_disease_model.py",
+      "meta": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "cv_accuracy_mean": 1.0,
+        "cv_accuracy_std": 0.0,
+        "n_estimators": 200,
+        "n_symptoms": 132,
+        "n_diseases": 41,
+        "n_train": 3936,
+        "n_test": 984,
+        "algorithm": "RandomForestClassifier",
+        "dataset": "disease_symptom_train.csv (4920 rows, 41 balanced classes, 120 rows/class)",
+        "note": "Replaces the previous model trained on the repo's 42-row Testing.csv, which recorded 0.0 test accuracy (unstratified split on too few rows for the class count). This dataset is large enough for a real stratified split and 5-fold cross-validation. CAVEAT: this public dataset gives every disease a fixed, non-overlapping symptom signature with no noise, so accuracy near 100% here reflects that the dataset is perfectly separable, not that real-world ambiguous/overlapping symptom presentations are solved. Treat this model's confidence as dataset-clean-case performance, not clinical validation."
+      },
+      "artifacts": {
+        "disease_model.pkl": {
+          "sha256": "a9adf4c1e64ac4354bdb143a4a31f9797d3958e68c6d7756272a0f5cb5f72aa7",
+          "size_bytes": 14367377,
+          "modified_at": "2026-09-08T09:20:31.883639+00:00"
+        }
+      }
+    },
+    "heart_disease_risk": {
+      "status": "trained",
+      "training_script": "train/train_heart_risk.py",
+      "meta": {
+        "algorithm": "XGBoost",
+        "accuracy": 0.9552,
+        "roc_auc": 0.9947,
+        "cv_auc": 0.9934,
+        "decision_threshold": 0.557,
+        "threshold_method": "Youden's J statistic on held-out test set (sensitivity + specificity - 1, maximized)",
+        "sensitivity_at_threshold": 0.9804,
+        "specificity_at_threshold": 0.9596,
+        "features": [
+          "age",
+          "sex",
+          "chest_pain_type",
+          "resting_blood_pressure",
+          "cholestoral",
+          "fasting_blood_sugar",
+          "rest_ecg",
+          "Max_heart_rate",
+          "exercise_induced_angina",
+          "oldpeak",
+          "slope",
+          "vessels_colored_by_flourosopy",
+          "thalassemia"
+        ],
+        "categorical_cols": [
+          "sex",
+          "chest_pain_type",
+          "fasting_blood_sugar",
+          "rest_ecg",
+          "exercise_induced_angina",
+          "slope",
+          "vessels_colored_by_flourosopy",
+          "thalassemia"
+        ],
+        "numerical_cols": [
+          "age",
+          "resting_blood_pressure",
+          "cholestoral",
+          "Max_heart_rate",
+          "oldpeak"
+        ],
+        "n_train": 803,
+        "n_test": 201,
+        "feature_importance": {
+          "chest_pain_type": 0.1989450752735138,
+          "thalassemia": 0.18155956268310547,
+          "vessels_colored_by_flourosopy": 0.1628590226173401,
+          "exercise_induced_angina": 0.0671459436416626,
+          "oldpeak": 0.062139637768268585,
+          "sex": 0.053330421447753906,
+          "slope": 0.050066761672496796,
+          "age": 0.04578172415494919,
+          "Max_heart_rate": 0.04239474982023239,
+          "resting_blood_pressure": 0.038730595260858536,
+          "rest_ecg": 0.03811219707131386,
+          "cholestoral": 0.03485884517431259,
+          "fasting_blood_sugar": 0.024075515568256378
+        },
+        "dataset": "HeartDiseaseTrain-Test.csv",
+        "note": "Trained on 1025-row cardiac dataset, cleaned for clinical validity. Scaler is fit on the training split only (see load_and_clean/train) to avoid test-set leakage."
+      },
+      "artifacts": {
+        "heart_risk_model.pkl": {
+          "sha256": "00dfe1c69c81b85d11ef6a7078cf9b6b0f418dc5825a7492dc623720660d5021",
+          "size_bytes": 295251,
+          "modified_at": "2026-09-08T09:20:21.085505+00:00"
+        },
+        "heart_scaler.pkl": {
+          "sha256": "c4ebea4778f57190bc051f4caa7e9086e15d4d7ccf61635c4e7c32c4da2478f9",
+          "size_bytes": 1103,
+          "modified_at": "2026-09-08T09:20:21.094590+00:00"
+        },
+        "heart_encoder.pkl": {
+          "sha256": "dc072031503c08cf1fc411df4d7b5145d9c55db64255aad114031494f9e25e81",
+          "size_bytes": 2849,
+          "modified_at": "2026-09-08T09:20:21.099813+00:00"
+        }
+      }
+    },
+    "cbc_analyzer": {
+      "status": "trained",
+      "training_script": "train/train_cbc_model.py",
+      "meta": {
+        "n_samples_clean": 416,
+        "n_features": 20,
+        "features": [
+          "WBC",
+          "LYMp",
+          "MIDp",
+          "NEUTp",
+          "LYMn",
+          "MIDn",
+          "NEUTn",
+          "RBC",
+          "HGB",
+          "HCT",
+          "MCV",
+          "MCH",
+          "MCHC",
+          "RDWSD",
+          "RDWCV",
+          "PLT",
+          "MPV",
+          "PDW",
+          "PCT",
+          "PLCR"
+        ],
+        "contamination": 0.05,
+        "kmeans_k": 3,
+        "n_anomalies": 21,
+        "cluster_label_map": {
+          "1": "Normal Pattern",
+          "0": "Mild Concern",
+          "2": "Abnormal Pattern"
+        },
+        "cluster_severity_scores": {
+          "0": 0.7328,
+          "1": 0.5407,
+          "2": 5.907
+        },
+        "dataset": "cbc information.xlsx",
+        "note": "Isolation Forest + KMeans on CBC blood parameters. cluster_label_map is recomputed by centroid severity every training run \u2014 never assume cluster ID N means the same thing across retrains."
+      },
+      "artifacts": {
+        "cbc_anomaly_model.pkl": {
+          "sha256": "6d3ed3463eb61713046e6a8168992f5e657377264cf8918fe433174976804825",
+          "size_bytes": 2237657,
+          "modified_at": "2026-09-08T09:20:25.818507+00:00"
+        },
+        "cbc_cluster_model.pkl": {
+          "sha256": "b46e05b1766724730f30f581d0f55824164f65bb6b1fed35ef01d5a3de73f89b",
+          "size_bytes": 2871,
+          "modified_at": "2026-09-08T09:20:25.863039+00:00"
+        },
+        "cbc_scaler.pkl": {
+          "sha256": "e5ddef32b5a109e436373fca9d0bf2d6dadb0733430e153deeaaf0f0bc3a6881",
+          "size_bytes": 1607,
+          "modified_at": "2026-09-08T09:20:25.909449+00:00"
+        }
+      }
+    },
+    "bayesian_engine": {
+      "status": "trained",
+      "training_script": "train/train_bayesian_network.py",
+      "meta": {
+        "node_count": 7,
+        "edges": [
+          [
+            "Age_Risk",
+            "Hypertension"
+          ],
+          [
+            "Age_Risk",
+            "Coronary_Disease"
+          ],
+          [
+            "Hypertension",
+            "Coronary_Disease"
+          ],
+          [
+            "Hypercholesterolemia",
+            "Coronary_Disease"
+          ],
+          [
+            "Hyperglycemia",
+            "Coronary_Disease"
+          ],
+          [
+            "Coronary_Disease",
+            "Chest_Pain"
+          ],
+          [
+            "Coronary_Disease",
+            "ECG_St_T"
+          ]
+        ],
+        "dag_topology": {
+          "nodes": [
+            {
+              "id": "Age_Risk",
+              "label": "Age > 55",
+              "type": "demographic"
+            },
+            {
+              "id": "Hypertension",
+              "label": "Hypertension (BP>130)",
+              "type": "risk_factor"
+            },
+            {
+              "id": "Hypercholesterolemia",
+              "label": "High Cholesterol (>240)",
+              "type": "risk_factor"
+            },
+            {
+              "id": "Hyperglycemia",
+              "label": "High Fasting Sugar",
+              "type": "risk_factor"
+            },
+            {
+              "id": "Chest_Pain",
+              "label": "Anginal Chest Pain",
+              "type": "symptom"
+            },
+            {
+              "id": "ECG_St_T",
+              "label": "ECG ST-T Abnormality",
+              "type": "finding"
+            },
+            {
+              "id": "Coronary_Disease",
+              "label": "Coronary Artery Disease",
+              "type": "target"
+            }
+          ],
+          "edges": [
+            {
+              "source": "Age_Risk",
+              "target": "Hypertension"
+            },
+            {
+              "source": "Age_Risk",
+              "target": "Coronary_Disease"
+            },
+            {
+              "source": "Hypertension",
+              "target": "Coronary_Disease"
+            },
+            {
+              "source": "Hypercholesterolemia",
+              "target": "Coronary_Disease"
+            },
+            {
+              "source": "Hyperglycemia",
+              "target": "Coronary_Disease"
+            },
+            {
+              "source": "Coronary_Disease",
+              "target": "Chest_Pain"
+            },
+            {
+              "source": "Coronary_Disease",
+              "target": "ECG_St_T"
+            }
+          ]
+        },
+        "estimator": "BayesianEstimator (BDeu prior, equivalent_sample_size=10)",
+        "n_train": 1025,
+        "node_marginals": {
+          "Age_Risk": 0.5063,
+          "Hypertension": 0.4341,
+          "Hypercholesterolemia": 0.4907,
+          "Hyperglycemia": 0.1493,
+          "Chest_Pain": 0.5151,
+          "ECG_St_T": 0.5005,
+          "Coronary_Disease": 0.5132
+        },
+        "dataset": "HeartDiseaseTrain-Test.csv",
+        "note": "Replaces the previous hardcoded likelihood-ratio constants \u2014 every CPD here is fit from data via pgmpy, not hand-picked."
+      },
+      "artifacts": {
+        "bayesian_network.pkl": {
+          "sha256": "697106b6cb4fffdf0ffbe94f456f07a75cbe47188ba2992834936450acd3b938",
+          "size_bytes": 3523,
+          "modified_at": "2026-09-08T09:20:40.716674+00:00"
+        }
+      }
+    },
+    "ecg_anomaly_detector": {
+      "status": "trained",
+      "training_script": "train/prepare_ecg_dataset.py + train/train_deep_anomaly.py",
+      "meta": {
+        "architecture": "1D-CNN autoencoder (PyTorch): Conv1d(1->16->32->8) / ConvTranspose1d(8->32->16->1), 256-sample input",
+        "window_length": 256,
+        "trained_on": "Normal beats only (unsupervised anomaly detection via reconstruction error)",
+        "n_train_normal": 17732,
+        "n_eval_normal": 4433,
+        "n_eval_abnormal": 5946,
+        "threshold": 0.001253,
+        "threshold_method": "95th percentile of reconstruction MSE on held-out normal beats",
+        "eval_precision": 0.8723,
+        "eval_recall": 0.255,
+        "eval_f1": 0.3946,
+        "eval_roc_auc": 0.7502,
+        "mean_normal_error": 0.000582,
+        "mean_abnormal_error": 0.00103,
+        "dataset": "PhysioNet MIT-BIH Arrhythmia Database (physionet.org/content/mitdb/)",
+        "records_used": [
+          "100",
+          "101",
+          "103",
+          "108",
+          "112",
+          "115",
+          "106",
+          "200",
+          "208",
+          "213",
+          "217",
+          "223"
+        ],
+        "note": "Binary anomaly detector only (normal vs abnormal beat morphology) \u2014 does not classify specific arrhythmia types (AFib/PVC/etc). A prior version of this route fabricated specific arrhythmia-type labels from a synthetic signal; this version reports only what the model actually supports."
+      },
+      "artifacts": {
+        "ecg_autoencoder.pt": {
+          "sha256": "7c6058b7657df1015433baa941fc1e92055e0bd13fcf4503a823a1f51c181465",
+          "size_bytes": 49295,
+          "modified_at": "2026-09-08T09:21:51.551865+00:00"
+        }
+      }
+    },
+    "rag_knowledge_base": {
+      "status": "built",
+      "training_script": "app/rag/retriever.py (built in-process at startup)",
+      "meta": {
+        "retrieval": "TF-IDF (word 1-2 grams, sublinear tf, Hinglish stopwords) + cosine similarity",
+        "n_documents": 53,
+        "n_features": 7416,
+        "documents_by_collection": {
+          "conditions": 20,
+          "herbs": 14,
+          "lifestyle": 9,
+          "safety": 10
+        },
+        "built_at": "2026-09-10T20:16:11.370083+00:00",
+        "corpus": "app/rag/corpus/*.json \u2014 curated Ayurvedic pharmacology, complaint-level self-care, red-flag triage criteria and lifestyle guidance",
+        "note": "Lexical retrieval, not dense embeddings. Chosen so the service stays within free-tier memory alongside XGBoost, pgmpy and the PyTorch autoencoder; at ~50 curated documents with domain-specific vocabulary, keyword overlap is a strong signal and dense retrieval would not earn its memory cost. Corpus keywords carry Hindi/Hinglish terms so patient phrasing retrieves correctly. Safety documents are force-included when they match, so red-flag criteria reach the prompt alongside any remedy for the same complaint. Retrieval quality is regression-tested in tests/test_rag_retrieval.py.",
+        "index_build_time_ms": 32
+      }
+    },
+    "ecg_beat_classifier": {
+      "status": "trained",
+      "training_script": "train/train_ecg_classifier.py",
+      "data_script": "train/prepare_ecg_inter_patient.py",
+      "meta": {
+        "architecture": "Ensemble of 4 1D-CNNs (mean logit), each Conv(1->32,k7)-BN-ReLU-Pool / Conv(32->64,k5)-BN-ReLU-Pool / Conv(64->128,k3)-BN-ReLU-GAP / Dropout(0.3) / Linear(128->1)",
+        "task": "Binary beat screen \u2014 normal (AAMI N) vs abnormal (AAMI S, V, F, Q) morphology",
+        "dataset": "PhysioNet MIT-BIH Arrhythmia Database, de Chazal et al. 2004 DS1/DS2 inter-patient split; paced records 102, 104, 107, 217 excluded per AAMI EC57",
+        "evaluation": "INTER-PATIENT: trained and tuned on DS1 (22 patients), scored once on DS2 (22 different patients) \u2014 the standard benchmark, comparable to published inter-patient results",
+        "input_normalization": "per-window z-score (256 samples), identical in training and serving via app.ml.ecg_classifier.per_window_normalize",
+        "n_train": 51000,
+        "n_test": 49693,
+        "cv_folds": [
+          [
+            "108",
+            "109",
+            "207",
+            "208",
+            "215"
+          ],
+          [
+            "101",
+            "114",
+            "118",
+            "201",
+            "223"
+          ],
+          [
+            "106",
+            "112",
+            "116",
+            "122",
+            "124",
+            "209"
+          ],
+          [
+            "115",
+            "119",
+            "203",
+            "205",
+            "220",
+            "230"
+          ]
+        ],
+        "cv_fold_roc_auc": [
+          0.8531,
+          0.655,
+          0.8373,
+          0.944
+        ],
+        "cv_out_of_fold": {
+          "recall": 0.4331,
+          "precision": 0.4933,
+          "specificity": 0.95,
+          "roc_auc": 0.8467
+        },
+        "cv_detection_by_class": {
+          "N": {
+            "n": 45846,
+            "flagged": 0.05
+          },
+          "S": {
+            "n": 944,
+            "flagged": 0.1642
+          },
+          "V": {
+            "n": 3788,
+            "flagged": 0.5444
+          },
+          "F": {
+            "n": 414,
+            "flagged": 0.0362
+          },
+          "Q": {
+            "n": 8,
+            "flagged": 0.0
+          }
+        },
+        "decision_threshold": 0.3165,
+        "threshold_scale": "calibrated probability",
+        "threshold_objective": "specificity >= 0.95 on out-of-fold DS1 predictions (at most 1 in 20 normal beats flagged)",
+        "calibration": {
+          "applied": true,
+          "method": "Platt scaling fitted on pooled out-of-fold predictions",
+          "cv_ece_raw": 0.3566,
+          "cv_ece_platt": 0.0347,
+          "a": 0.40055,
+          "b": -2.93378,
+          "test_brier": 0.0734,
+          "test_ece": 0.0498,
+          "test_brier_raw": 0.2548,
+          "test_ece_raw": 0.2871
+        },
+        "class_weighting": "pos_weight ~9.00 (abnormal is the minority class)",
+        "epochs": 15,
+        "seed": 42,
+        "precision": 0.8387,
+        "recall": 0.3883,
+        "f1": 0.5308,
+        "roc_auc": 0.8179,
+        "average_precision": 0.5522,
+        "specificity": 0.9908,
+        "confusion": {
+          "tn": 43834,
+          "fp": 407,
+          "fn": 3335,
+          "tp": 2117
+        },
+        "detection_by_class": {
+          "N": {
+            "n": 44241,
+            "flagged": 0.0092
+          },
+          "S": {
+            "n": 1837,
+            "flagged": 0.0093
+          },
+          "V": {
+            "n": 3220,
+            "flagged": 0.6183
+          },
+          "F": {
+            "n": 388,
+            "flagged": 0.2655
+          },
+          "Q": {
+            "n": 7,
+            "flagged": 0.8571
+          }
+        },
+        "demo_samples": {
+          "abnormal_class": "V (ventricular ectopic, AAMI)",
+          "selection": "random within class (seed 42), not chosen by model score, from DS2 records outside the original 12-record subset, so neither model trained on them",
+          "records": [
+            "111",
+            "117",
+            "210",
+            "214",
+            "221",
+            "222",
+            "228",
+            "232",
+            "233"
+          ]
+        },
+        "provenance": "Earlier iterations used a 12-record subset. Per-window normalisation was chosen there on held-out records that included 213, now part of DS2, so DS2 is not entirely untouched by earlier design decisions.",
+        "note": "A morphology screen over single beats: it cannot see beat timing, so supraventricular beats are largely missed (see detection_by_class). It surfaces beats for review; it does not classify arrhythmia type."
+      },
+      "artifacts": {
+        "ecg_classifier.pt": {
+          "sha256": "d3f1c919bdbe80a07015e1cfe931358013db5d77bef47be2f7173b4dda40a22c",
+          "size_bytes": 610877
+        }
+      }
+    }
+  }
+}
