@@ -64,7 +64,11 @@ router.get('/', authenticate, async (req: Request, res: Response, next: NextFunc
 // PATCH /api/v1/appointment-requests/:id/approve — receptionist approves
 router.patch('/:id/approve', authenticate, requireRole(...SCHEDULERS), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const result = await appointmentRequestService.approve(req.params.id);
+        const result = await appointmentRequestService.approve(
+            req.params.id,
+            req.body.scheduledDate,
+            req.body.scheduledTime,
+        );
         sendSuccess(res, result);
     } catch (e) { next(e); }
 });

@@ -110,41 +110,6 @@ export const mlController = {
     },
 
     /**
-     * GET /api/v1/ml/hypothesis-test?question=1-4
-     * Proxies to ml-service: GET /api/hypothesis/test?question=N
-     */
-    runHypothesisTest: async (req: Request, res: Response) => {
-        try {
-            const question = parseInt(req.query.question as string);
-            if (!question || question < 1 || question > 4) {
-                res.status(400).json({ success: false, message: 'question param must be 1-4' });
-                return;
-            }
-            const result = await mlService.runHypothesisTest(question);
-            res.json(result);
-        } catch (err: any) {
-            const status = err?.response?.status || err?.statusCode || 503;
-            const msg = err?.response?.data?.detail || err?.message || 'Hypothesis service unavailable';
-            res.status(status).json({ success: false, message: msg });
-        }
-    },
-
-    /**
-     * GET /api/v1/ml/population-stats
-     * Proxies to ml-service: GET /api/hypothesis/population-stats
-     */
-    getPopulationStats: async (_req: Request, res: Response) => {
-        try {
-            const result = await mlService.getPopulationStats();
-            res.json(result);
-        } catch (err: any) {
-            const status = err?.response?.status || err?.statusCode || 503;
-            const msg = err?.response?.data?.detail || err?.message || 'Population stats unavailable';
-            res.status(status).json({ success: false, message: msg });
-        }
-    },
-
-    /**
      * POST /api/v1/ml/bayesian-infer
      * Runs Bayesian Decision Network & Uncertainty Engine
      * Proxies to ml-service: POST /api/bayesian/infer

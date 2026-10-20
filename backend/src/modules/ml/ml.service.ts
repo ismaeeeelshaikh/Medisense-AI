@@ -156,29 +156,6 @@ export const mlService = {
     },
 
     /**
-     * Run Hypothesis Test.
-     * Calls: GET /api/hypothesis/test?question=N
-     */
-    async runHypothesisTest(question: number) {
-        if (question < 1 || question > 4) throw new AppError('question must be 1-4', 400, 'INVALID_INPUT');
-        const { data } = await mlClient.get('/api/hypothesis/test', { params: { question } });
-        return data;
-    },
-
-    /**
-     * Get population-level stats for Research & Analytics.
-     * Calls: GET /api/hypothesis/population-stats
-     */
-    async getPopulationStats() {
-        const cacheKey = 'ml:population:stats';
-        const cached = await cacheGet(cacheKey);
-        if (cached) return cached;
-        const { data } = await mlClient.get('/api/hypothesis/population-stats');
-        await cacheSet(cacheKey, data, 3600);
-        return data;
-    },
-
-    /**
      * Run Bayesian Clinical Decision & Uncertainty Engine
      * Calls: POST /api/bayesian/infer
      */

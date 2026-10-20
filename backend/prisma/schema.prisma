@@ -435,6 +435,10 @@ model AppointmentRequest {
   doctorId         String                // User.id of doctor
   requestedDate    DateTime
   timeSlot         AppointmentTimeSlot
+  // Confirmed local calendar date and wall-clock time. scheduledDate is SQL DATE;
+  // scheduledTime is HH:mm in the hospital's local time, with no server timezone conversion.
+  scheduledDate    DateTime?             @db.Date
+  scheduledTime    String?               @db.VarChar(5)
   reason           String?
   status           AppointmentReqStatus  @default(PENDING)
   // Counter-offer fields (filled by receptionist on rejection)

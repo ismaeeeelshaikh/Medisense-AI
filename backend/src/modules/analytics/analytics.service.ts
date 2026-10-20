@@ -1,9 +1,5 @@
 import { prisma } from '../../config/database';
-import axios from 'axios';
-import { env } from '../../config/env';
 import { cacheGet, cacheSet } from '../../config/redis';
-
-const mlClient = axios.create({ baseURL: env.ML_SERVICE_URL, timeout: 30000 });
 
 export const analyticsService = {
     async getDashboard() {
@@ -107,51 +103,4 @@ export const analyticsService = {
         return result;
     },
 
-    async getEDAData() {
-        const cacheKey = 'analytics:eda';
-        const cached = await cacheGet(cacheKey);
-        if (cached) return cached;
-        try {
-            const { data } = await mlClient.get('/api/analytics/eda');
-            const result = data.data || data;
-            await cacheSet(cacheKey, result, 3600 * 6);
-            return result;
-        } catch { return { error: 'ML service unavailable' }; }
-    },
-
-    async getStatsSummary() {
-        const cacheKey = 'analytics:stats';
-        const cached = await cacheGet(cacheKey);
-        if (cached) return cached;
-        try {
-            const { data } = await mlClient.get('/api/analytics/stats');
-            const result = data.data || data;
-            await cacheSet(cacheKey, result, 3600 * 6);
-            return result;
-        } catch { return { error: 'ML service unavailable' }; }
-    },
-
-    async getHypothesisResults() {
-        const cacheKey = 'analytics:hypothesis';
-        const cached = await cacheGet(cacheKey);
-        if (cached) return cached;
-        try {
-            const { data } = await mlClient.get('/api/analytics/hypothesis');
-            const result = data.data || data;
-            await cacheSet(cacheKey, result, 3600 * 24);
-            return result;
-        } catch { return { error: 'ML service unavailable' }; }
-    },
-
-    async getBigDataReport() {
-        const cacheKey = 'analytics:bigdata';
-        const cached = await cacheGet(cacheKey);
-        if (cached) return cached;
-        try {
-            const { data } = await mlClient.get('/api/analytics/bigdata');
-            const result = data.data || data;
-            await cacheSet(cacheKey, result, 3600 * 12);
-            return result;
-        } catch { return { error: 'ML service unavailable' }; }
-    },
 };
