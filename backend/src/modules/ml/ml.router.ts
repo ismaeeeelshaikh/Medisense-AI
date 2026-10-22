@@ -14,8 +14,6 @@ router.use(authenticate);
 // on. The patient UI no longer offers them; this stops a direct API call from
 // reaching them too.
 const CLINICAL = ['SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'NURSE'] as const;
-// Population-level research views (Research & Analytics).
-const RESEARCH = ['SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'NURSE', 'ANALYST'] as const;
 
 /**
  * POST /api/v1/ml/predict-disease
@@ -57,18 +55,6 @@ router.post('/cbc-analyze', mlController.analyzeCBC);
  * Get CBC normal reference ranges
  */
 router.get('/cbc-ranges', mlController.getCBCRanges);
-
-/**
- * GET /api/v1/ml/hypothesis-test?question=1-4
- * Run a pre-built statistical hypothesis test
- */
-router.get('/hypothesis-test', requireRole(...RESEARCH), mlController.runHypothesisTest);
-
-/**
- * GET /api/v1/ml/population-stats
- * Get big data analytics / population risk stats
- */
-router.get('/population-stats', requireRole(...RESEARCH), mlController.getPopulationStats);
 
 /**
  * POST /api/v1/ml/bayesian-infer

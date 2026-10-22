@@ -17,16 +17,4 @@ export const analyticsController = {
     getRiskDistribution: asyncHandler(async (_req: AuthRequest, res: Response) => {
         sendSuccess(res, await analyticsService.getRiskDistributionOverTime());
     }),
-    getEDA: asyncHandler(async (_req: AuthRequest, res: Response) => {
-        sendSuccess(res, await analyticsService.getEDAData());
-    }),
-    getStats: asyncHandler(async (_req: AuthRequest, res: Response) => {
-        sendSuccess(res, await analyticsService.getStatsSummary());
-    }),
-    getHypothesis: asyncHandler(async (_req: AuthRequest, res: Response) => {
-        sendSuccess(res, await analyticsService.getHypothesisResults());
-    }),
-    getBigData: asyncHandler(async (_req: AuthRequest, res: Response) => {
-        sendSuccess(res, await analyticsService.getBigDataReport());
-    }),
 };

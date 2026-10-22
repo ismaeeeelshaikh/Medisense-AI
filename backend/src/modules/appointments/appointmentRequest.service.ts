@@ -15,6 +15,25 @@ const SLOT_LABELS: Record<string, string> = {
     LATE_NIGHT: '9:00 PM – 12:00 AM',
 };
 
+function parseScheduledDate(value: string): Date {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        throw new AppError('scheduledDate must use YYYY-MM-DD format', 400, 'INVALID_INPUT');
+    }
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) {
+        throw new AppError('scheduledDate is not a valid calendar date', 400, 'INVALID_INPUT');
+    }
+    return date;
+}
+
+function validateScheduledTime(value: string): string {
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value)) {
+        throw new AppError('scheduledTime must use 24-hour HH:mm format', 400, 'INVALID_INPUT');
+    }
+    return value;
+}
+
 export const appointmentRequestService = {
     /** Patient creates an appointment request */
     async create(data: {
@@ -190,7 +209,9 @@ export const appointmentRequestService = {
     },
 
     /** Receptionist: approve a request */
-    async approve(id: string) {
+    async approve(id: string, scheduledDate?: string, scheduledTime?: string) {
+        const parsedDate = scheduledDate === undefined ? undefined : parseScheduledDate(scheduledDate);
+        const parsedTime = scheduledTime === undefined ? undefined : validateScheduledTime(scheduledTime);
         const req = await prisma.appointmentRequest.findUnique({
             where: { id },
             include: { patient: { select: { userId: true, firstName: true, lastName: true } } },
@@ -200,7 +221,12 @@ export const appointmentRequestService = {
 
         const updated = await prisma.appointmentRequest.update({
             where: { id },
-            data: { status: 'APPROVED', approvedAt: new Date() },
+            data: {
+                status: 'APPROVED',
+                approvedAt: new Date(),
+                ...(parsedDate !== undefined ? { scheduledDate: parsedDate } : {}),
+                ...(parsedTime !== undefined ? { scheduledTime: parsedTime } : {}),
+            },
         });
 
         const doctor = await prisma.user.findUnique({
@@ -215,16 +241,17 @@ export const appointmentRequestService = {
                 requestId: id,
                 doctorName: `Dr. ${doctor?.firstName} ${doctor?.lastName}`,
                 specialization: doctor?.specialization,
-                date: req.requestedDate,
+                date: updated.scheduledDate ?? req.requestedDate,
+                time: updated.scheduledTime,
                 slot: req.timeSlot,
-                slotLabel: SLOT_LABELS[req.timeSlot] || req.timeSlot,
+                slotLabel: updated.scheduledTime || SLOT_LABELS[req.timeSlot] || req.timeSlot,
             });
 
             // Persistent notification
             await notificationService.create(
                 patientUserId,
                 '✅ Appointment Confirmed!',
-                `Your appointment with Dr. ${doctor?.firstName} ${doctor?.lastName} (${doctor?.specialization}) on ${new Date(req.requestedDate).toDateString()} — ${SLOT_LABELS[req.timeSlot]} has been approved.`,
+                `Your appointment with Dr. ${doctor?.firstName} ${doctor?.lastName} (${doctor?.specialization}) on ${updated.scheduledDate?.toISOString().slice(0, 10) ?? req.requestedDate.toISOString().slice(0, 10)}${updated.scheduledTime ? ` at ${updated.scheduledTime}` : ` — ${SLOT_LABELS[req.timeSlot] || req.timeSlot}`} has been approved.`,
                 'SUCCESS',
                 { appointmentRequestId: id },
             );
