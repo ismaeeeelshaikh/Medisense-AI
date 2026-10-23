@@ -5,10 +5,6 @@ export const analyticsApi = {
     getAdmissionTrend: (period?: string) => api.get('/analytics/admissions/trend', { params: { period } }),
     getWardOccupancy: () => api.get('/analytics/ward/occupancy'),
     getRiskDistribution: () => api.get('/analytics/risk/distribution'),
-    getEDA: () => api.get('/analytics/eda/distributions'),
-    getStats: () => api.get('/analytics/stats/summary'),
-    getHypothesis: () => api.get('/analytics/hypothesis/results'),
-    getBigData: () => api.get('/analytics/big-data/report'),
 };
 
 export const alertApi = {

@@ -38,7 +38,7 @@ const NAV_BY_ROLE: Record<string, Array<{ to: string; icon: any; label: string; 
         { to: '/appointments', icon: Calendar, label: 'Appointments', badge: true },
         { to: '/ml-predictions', icon: Brain, label: 'AI Clinical Tools' },
         { to: '/report-analyzer', icon: FlaskConical, label: 'CBC Analyzer' },
-        { to: '/research-analytics', icon: BarChart3, label: 'Research & Analytics' },
+        { to: '/analytics', icon: BarChart3, label: 'Analytics' },
         { to: '/alerts', icon: Bell, label: 'Alerts', badge: true },
         { to: '/settings', icon: Settings, label: 'Settings' },
     ],
@@ -76,7 +76,6 @@ const NAV_BY_ROLE: Record<string, Array<{ to: string; icon: any; label: string; 
     ANALYST: [
         { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
         { to: '/analytics', icon: BarChart3, label: 'Analytics' },
-        { to: '/research-analytics', icon: Microscope, label: 'Research & Analytics' },
     ],
 };
 

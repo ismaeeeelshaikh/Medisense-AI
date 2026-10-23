@@ -69,7 +69,7 @@ export default function DoctorPatientDetail() {
     }, [id]);
 
     function openAITools() {
-        navigate('/ai-tools');
+        navigate('/ml-predictions');
     }
 
     async function runPrediction() {

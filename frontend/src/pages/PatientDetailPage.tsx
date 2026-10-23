@@ -115,7 +115,7 @@ export default function PatientDetailPage() {
         return () => { leavePatientRoom(id); };
     }, [id]);
 
-    const openAITools = () => navigate('/ai-tools');
+    const openAITools = () => navigate('/ml-predictions');
 
     const runPrediction = async () => {
         if (!id || !patient) return;

@@ -27,7 +27,6 @@ const BillingPage = lazy(() => import('./pages/BillingPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const DoctorPatientsPage = lazy(() => import('./pages/DoctorPatientsPage'));
 const DoctorPatientDetail = lazy(() => import('./pages/DoctorPatientDetail'));
-const ResearchAnalyticsPage = lazy(() => import('./pages/ResearchAnalyticsPage'));
 const AiDoctorPage = lazy(() => import('./pages/AiDoctorPage'));
 
 const PageLoader = () => (
@@ -55,7 +54,6 @@ const SCHEDULING = ['SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST', 'DOCTOR'];
 const BILLING = ['SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'RECEPTIONIST'];
 const ADMINS = ['ADMIN', 'SUPER_ADMIN'];
 const CLINICAL_CARE = ['SUPER_ADMIN', 'ADMIN', 'DOCTOR', 'NURSE'];
-const RESEARCH = ['DOCTOR', 'ADMIN', 'SUPER_ADMIN', 'ANALYST'];
 const LAB = ['LAB_TECHNICIAN', 'ADMIN', 'SUPER_ADMIN'];
 
 // Role-based route guard. An unauthorised role goes to its own home page, not
@@ -109,7 +107,6 @@ export default function App() {
                     {/* AI tools — the page itself narrows which tools a patient sees */}
                     <Route path="/ml-predictions" element={guard(['DOCTOR', 'PATIENT', 'ADMIN', 'SUPER_ADMIN'], <MLPredictionsPage />)} />
                     <Route path="/report-analyzer" element={guard(['DOCTOR', 'ADMIN', 'SUPER_ADMIN'], <ReportAnalyzerPage />)} />
-                    <Route path="/research-analytics" element={guard(RESEARCH, <ResearchAnalyticsPage />)} />
                     <Route path="/vitals" element={guard(CLINICAL_CARE, <VitalsMonitorPage />)} />
                     <Route path="/analytics" element={guard(HOSPITAL_DASHBOARD, <AnalyticsPage />)} />
                     <Route path="/alerts" element={guard(STAFF, <AlertsPage />)} />
